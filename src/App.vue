@@ -1,6 +1,41 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import logoUrl from './assets/logo.png'
+
+import { onMounted, onUnmounted } from 'vue'
+
+let lastX = 0
+let lastY = 0
+
+function createSparkle(x, y) {
+  const sparkle = document.createElement('span')
+  sparkle.className = 'cursor-sparkle'
+  const size = 4 + Math.random() * 4
+  const driftX = (Math.random() - 0.5) * 20
+  sparkle.style.left = x + 'px'
+  sparkle.style.top = y + 'px'
+  sparkle.style.width = size + 'px'
+  sparkle.style.height = size + 'px'
+  sparkle.style.setProperty('--drift-x', driftX + 'px')
+  document.body.appendChild(sparkle)
+  setTimeout(() => sparkle.remove(), 700)
+}
+
+function handleMouseMove(e) {
+  const dx = e.clientX - lastX
+  const dy = e.clientY - lastY
+  if (Math.sqrt(dx * dx + dy * dy) < 20) return
+  lastX = e.clientX
+  lastY = e.clientY
+  createSparkle(e.clientX, e.clientY)
+}
+
+onMounted(() => {
+  window.addEventListener('mousemove', handleMouseMove)
+})
+onUnmounted(() => {
+  window.removeEventListener('mousemove', handleMouseMove)
+})
 </script>
 
 <template>
@@ -15,7 +50,7 @@ import logoUrl from './assets/logo.png'
     </div>
   </header>
 
-  <main>
+  <main class="app-main">
     <RouterView />
   </main>
 </template>
@@ -33,7 +68,7 @@ import logoUrl from './assets/logo.png'
   align-items: center;
 }
 .logo-img {
-  height: 40px;
+  height: 50px;
   width: auto;
 }
 .header-actions {
@@ -55,5 +90,9 @@ import logoUrl from './assets/logo.png'
   background: white;
   cursor: pointer;
   font-size: 0.9rem;
+}
+.app-main {
+  flex: 1;
+  overflow: hidden;
 }
 </style>

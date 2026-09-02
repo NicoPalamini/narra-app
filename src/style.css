@@ -1,0 +1,28 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  background-color: #FCF7F3;
+}
+
+.cursor-sparkle {
+  position: fixed;
+  border-radius: 50%;
+  background: #b9a6f0;
+  box-shadow: 0 0 6px 2px rgba(185, 166, 240, 0.6);
+  pointer-events: none;
+  z-index: 9999;
+  animation: sparkle-fade 0.7s ease-out forwards;
+}
+@keyframes sparkle-fade {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--drift-x, 0px)), -50%) scale(0.2) translateY(-16px);
+  }
+}
