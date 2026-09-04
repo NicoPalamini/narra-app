@@ -379,8 +379,8 @@ h1 {
   justify-content: center;
 }
 .option-icon-img {
-  width: 3.8rem;   /* era 2.1rem */
-  height: 3.8rem;  /* era 2.1rem */
+  width: 3.8rem;   
+  height: 3.8rem;  
   object-fit: contain;
 }
 .option-card strong {

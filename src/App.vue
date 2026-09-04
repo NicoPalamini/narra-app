@@ -1,8 +1,22 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth'
+import { auth, googleProvider } from './firebase'
 import logoUrl from './assets/logo.png'
 
-import { onMounted, onUnmounted } from 'vue'
+const currentUser = ref(null)
+const avatarFailed = ref(false)
+
+function signIn() {
+  signInWithPopup(auth, googleProvider).catch((err) => {
+    console.error('Errore di accesso:', err)
+  })
+}
+
+function logOut() {
+  signOut(auth)
+}
 
 let lastX = 0
 let lastY = 0
@@ -32,6 +46,10 @@ function handleMouseMove(e) {
 
 onMounted(() => {
   window.addEventListener('mousemove', handleMouseMove)
+  onAuthStateChanged(auth, (user) => {
+    currentUser.value = user
+    avatarFailed.value = false
+  })
 })
 onUnmounted(() => {
   window.removeEventListener('mousemove', handleMouseMove)
@@ -46,11 +64,26 @@ onUnmounted(() => {
 
     <div class="header-actions">
       <RouterLink to="/archivio" class="archivio-link">ARCHIVIO</RouterLink>
-      <button class="google-btn">Accedi con Google</button>
+
+      <button v-if="!currentUser" class="google-btn" @click="signIn">Accedi con Google</button>
+
+      <button v-else class="user-chip" @click="logOut" :title="'Clicca per uscire, ' + currentUser.displayName">
+        <img
+          v-if="currentUser.photoURL && !avatarFailed"
+          :src="currentUser.photoURL"
+          :alt="currentUser.displayName"
+          class="user-avatar"
+          @error="avatarFailed = true"
+        />
+        <span v-else class="user-avatar user-avatar-fallback">
+          {{ currentUser.displayName.charAt(0) }}
+        </span>
+        <span class="user-name">{{ currentUser.displayName.split(' ')[0] }}</span>
+      </button>
     </div>
   </header>
 
-  <main class="app-main">
+  <main>
     <RouterView />
   </main>
 </template>
@@ -68,7 +101,7 @@ onUnmounted(() => {
   align-items: center;
 }
 .logo-img {
-  height: 50px;
+  height: 38px;
   width: auto;
 }
 .header-actions {
@@ -91,8 +124,35 @@ onUnmounted(() => {
   cursor: pointer;
   font-size: 0.9rem;
 }
-.app-main {
-  flex: 1;
-  overflow: hidden;
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.9rem 0.35rem 0.35rem;
+  border: 1px solid #ddd;
+  border-radius: 999px;
+  background: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+.user-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.user-avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #6c4fd6;
+  color: white;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+.user-name {
+  font-weight: 600;
+  color: #333;
 }
 </style>

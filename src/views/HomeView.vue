@@ -3,7 +3,7 @@
     <section class="hero">
       <div class="hero-text">
         <span class="badge">✨ L'AI che trasforma i ricordi in storie</span>
-        <h1>Storie uniche, <span class="highlight">nate dai ricordi</span></h1>
+       <h1>Storie uniche,<br /><span class="highlight">nate dai ricordi</span></h1>
         <p>Racconta ciò che conta davvero. Noi lo trasformiamo in una storia indimenticabile per i tuoi bambini.</p>
         <RouterLink to="/crea" class="cta-button">
           Crea la tua prima storia
@@ -65,7 +65,7 @@ import frecciaIcon from '../assets/frecciabianca.svg'
 .hero {
   display: grid;
   grid-template-columns: 0.9fr 1.1fr;
-   align-items: flex-start;   /* era center */
+   align-items: flex-start;   
   gap: 2rem;
 }
 .hero-text {
@@ -81,7 +81,7 @@ import frecciaIcon from '../assets/frecciabianca.svg'
   margin-bottom: 1rem;
 }
 h1 {
-  font-size: 2.5rem;   /* era 2.2rem */
+  font-size: 2.5rem;   
   line-height: 1.2;
   margin: 0 0 0.8rem;
 }
@@ -125,7 +125,7 @@ h1 {
 .steps-subtitle {
   text-align: center;
   color: #666;
-  margin: 0 0 1.5rem;   /* era 3rem */
+  margin: 0 0 2.2rem; 
   font-size: 0.9rem;
 }
 .steps-grid {
@@ -141,8 +141,8 @@ h1 {
   gap: 0.4rem;
 }
 .step-icon {
-  height: 5.5rem;   /* era 3.5rem */
-  width: 5.5rem;    /* era 3.5rem */
+  height: 5.5rem;   
+  width: 5.5rem;    
   object-fit: contain;
 }
 .step h3 {
