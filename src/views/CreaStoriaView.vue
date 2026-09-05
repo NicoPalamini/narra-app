@@ -30,8 +30,9 @@
         <p class="hint">💡 Consiglio: sfondo chiaro, immagine in primo piano</p>
 
         <div class="submit-row">
-          <button class="submit-button" @click="creaStoria">Crea la mia storia</button>
-          <p class="footer-hint">🔒 Il processo è gratuito, veloce e sicuro.</p>
+          <button class="submit-button" :disabled="!isFormValid" @click="creaStoria">Crea la mia storia</button>
+          <p v-if="!isFormValid" class="validation-hint">Carica una foto e scrivi il nome del personaggio per continuare.</p>
+          <p v-else class="footer-hint">🔒 Il processo è gratuito, veloce e sicuro.</p>
         </div>
       </div>
 
@@ -101,7 +102,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { storyDraft } from '../store'
 
@@ -137,6 +138,10 @@ const styles = [
   { id: 'mattoncini', thumbnail: stileMattoncini, label: 'Mattoncini 3D' },
   { id: 'feltro', thumbnail: stileFeltro, label: 'Feltro' },
 ]
+
+const isFormValid = computed(() => {
+  return imagePreview.value !== null && characterName.value.trim() !== ''
+})
 
 function handleFileChange(event) {
   const file = event.target.files[0]
@@ -174,6 +179,7 @@ function handleFileChange(event) {
 }
 
 function creaStoria() {
+  if (!isFormValid.value) return
   storyDraft.characterName = characterName.value
   storyDraft.storyType = storyType.value
   storyDraft.illustrationStyle = illustrationStyle.value
@@ -315,6 +321,15 @@ h1 {
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
+}
+.submit-button:disabled {
+  background: #c9c2e0;
+  cursor: not-allowed;
+}
+.validation-hint {
+  font-size: 0.75rem;
+  color: #b5563a;
+  margin: 0.6rem 0 0;
 }
 .footer-hint {
   font-size: 0.75rem;

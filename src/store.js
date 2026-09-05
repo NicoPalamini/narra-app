@@ -5,6 +5,7 @@ export const storyDraft = reactive({
   storyType: '',
   illustrationStyle: '',
   imageBase64: null,
+  illustrazioneBase64: null,
   savedId: null,
   titolo: '',
   testo: '',

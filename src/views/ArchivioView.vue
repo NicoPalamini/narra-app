@@ -23,7 +23,7 @@
             @click="selectedStory = story"
           >
             <span class="tape" :style="tapeStyle(index)"></span>
-            <img v-if="story.imageBase64" :src="story.imageBase64" alt="" class="story-photo" />
+            <img v-if="story.illustrazioneBase64" :src="story.illustrazioneBase64" alt="" class="story-photo" />
             <p class="story-title">{{ story.titolo }}</p>
             <p class="story-date">{{ formatDate(story.createdAt) }}</p>
           </button>
@@ -34,7 +34,7 @@
     <div v-if="selectedStory" class="overlay" @click.self="selectedStory = null">
       <div class="preview-card">
         <button class="close-btn" @click="selectedStory = null">✕</button>
-        <img v-if="selectedStory.imageBase64" :src="selectedStory.imageBase64" alt="" class="preview-photo" />
+        <img v-if="selectedStory.illustrazioneBase64" :src="selectedStory.illustrazioneBase64" alt="" class="preview-photo" />
         <h2>{{ selectedStory.titolo }}</h2>
         <p class="preview-date">{{ formatDate(selectedStory.createdAt) }}</p>
         <p class="preview-excerpt">{{ selectedStory.testo }}</p>

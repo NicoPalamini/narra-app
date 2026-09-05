@@ -4,18 +4,28 @@
       <h1 v-if="!isFromArchive">✨ La tua storia è pronta! ✨</h1>
       <p class="subtitle" v-if="!isFromArchive">Ecco la storia speciale che abbiamo creato per {{ display.characterName }}.</p>
 
-      <div class="book-spread">
-        <div class="book-page image-page">
-          <img v-if="display.imageBase64" :src="display.imageBase64" alt="" />
-        </div>
-        <div class="book-page text-page">
-          <h2>{{ display.titolo }}</h2>
-          <p>{{ display.testo }}</p>
+      <div class="book-frame" ref="bookFrameRef">
+        <img :src="fiabaImg" alt="" class="book-bg" />
+        <div class="book-content">
+          <div class="left-page" :class="'font-' + display.storyType">
+            <h2 class="story-title">{{ display.titolo }}</h2>
+            <p class="story-text" v-html="formattedTesto"></p>
+          </div>
+          <div class="right-page">
+            <div class="postcard">
+              <span class="tape tape-top"></span>
+              <span class="tape tape-bottom"></span>
+              <img v-if="display.illustrazioneBase64" :src="display.illustrazioneBase64" alt="" class="postcard-img" />
+            </div>
+          </div>
         </div>
       </div>
 
       <div class="actions">
         <button v-if="!isFromArchive" class="secondary-btn" @click="rigenera">↻ Rigenera la storia</button>
+        <button class="secondary-btn" :disabled="salvando" @click="scaricaLibro">
+          {{ salvando ? '⏳ Un attimo...' : '⬇ Salva il libro' }}
+        </button>
         <button class="primary-btn" @click="vaiArchivio">Vai all'Archivio</button>
       </div>
       <p class="footer-hint">🔒 La tua storia è al sicuro e sempre disponibile per te.</p>
@@ -24,22 +34,45 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { doc, getDoc } from 'firebase/firestore'
+import html2canvas from 'html2canvas'
 import { db } from '../firebase'
 import { storyDraft } from '../store'
+
+import fiabaAcquerello from '../assets/fiaba-acquerello.png'
+import fiabaGonfio from '../assets/fiaba-gonfio.png'
+import fiabaMattoncini from '../assets/fiaba-mattoncini.png'
+import fiabaFeltro from '../assets/fiaba-feltro.png'
+
+const libriPerStile = {
+  acquerello: fiabaAcquerello,
+  gonfio: fiabaGonfio,
+  mattoncini: fiabaMattoncini,
+  feltro: fiabaFeltro,
+}
 
 const route = useRoute()
 const router = useRouter()
 
 const isFromArchive = ref(false)
 const loading = ref(true)
+const salvando = ref(false)
+const bookFrameRef = ref(null)
 const display = ref({
   characterName: '',
-  imageBase64: null,
+  illustrazioneBase64: null,
   titolo: '',
   testo: '',
+  storyType: '',
+  illustrationStyle: '',
+})
+
+const fiabaImg = computed(() => libriPerStile[display.value.illustrationStyle] || fiabaAcquerello)
+
+const formattedTesto = computed(() => {
+  return (display.value.testo || '').replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
 })
 
 onMounted(async () => {
@@ -52,17 +85,21 @@ onMounted(async () => {
       const data = snap.data()
       display.value = {
         characterName: data.characterName,
-        imageBase64: data.imageBase64,
+        illustrazioneBase64: data.illustrazioneBase64,
         titolo: data.titolo,
         testo: data.testo,
+        storyType: data.storyType,
+        illustrationStyle: data.illustrationStyle,
       }
     }
   } else {
     display.value = {
       characterName: storyDraft.characterName,
-      imageBase64: storyDraft.imageBase64,
+      illustrazioneBase64: storyDraft.illustrazioneBase64,
       titolo: storyDraft.titolo,
       testo: storyDraft.testo,
+      storyType: storyDraft.storyType,
+      illustrationStyle: storyDraft.illustrationStyle,
     }
   }
   loading.value = false
@@ -74,11 +111,38 @@ function rigenera() {
 function vaiArchivio() {
   router.push('/archivio')
 }
+
+async function scaricaLibro() {
+  if (!bookFrameRef.value || salvando.value) return
+  salvando.value = true
+  try {
+    const canvas = await html2canvas(bookFrameRef.value, {
+      backgroundColor: null,
+      scale: 2,
+      useCORS: true,
+    })
+    const nomeFile = (display.value.titolo || 'storia')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/gi, '-')
+      .replace(/^-+|-+$/g, '')
+    const link = document.createElement('a')
+    link.href = canvas.toDataURL('image/png')
+    link.download = `${nomeFile || 'la-mia-storia'}.png`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  } catch (err) {
+    console.error('Errore nel salvataggio del libro:', err)
+    alert('Non siamo riusciti a salvare il libro. Riprova.')
+  } finally {
+    salvando.value = false
+  }
+}
 </script>
 
 <style scoped>
 .storia-pronta {
-  max-width: 900px;
+  max-width: 1250px;
   margin: 3rem auto;
   text-align: center;
   padding: 0 1.5rem;
@@ -91,44 +155,128 @@ h1 {
   color: #666;
   margin-bottom: 2rem;
 }
-.book-spread {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  text-align: left;
+.book-frame {
+  position: relative;
   margin: 2rem 0;
 }
-.book-page {
-  background: white;
-  border-radius: 16px;
-  padding: 1.2rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-  min-height: 280px;
+.book-bg {
+  display: block;
+  width: 100%;
+  height: auto;
 }
-.image-page {
+.book-content {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.left-page {
+  padding: 39% 8% 18% 29%;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  overflow: hidden;
+  min-height: 0;
+  box-sizing: border-box;
+}
+.story-title {
+  font-weight: 800;
+  line-height: 1.15;
+  margin: 0 0 0.9rem;
+  font-size: 1.75rem;
+  letter-spacing: 0.01em;
+  flex-shrink: 0;
+  overflow-wrap: break-word;
+}
+.story-text {
+  color: #4a3f33;
+  line-height: 1.45;
+  font-size: 0.63rem;
+  font-weight: 400;
+  margin: 0;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-wrap: break-word;
+  padding-right: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+.story-text strong {
+  font-weight: 700;
+  color: #2f2718;
+}
+.font-avventura .story-title {
+  font-family: 'Kalam', cursive;
+  font-weight: 700;
+  color: #b5563a;
+  font-size: 1.9rem;
+}
+.font-magia .story-title {
+  font-family: 'Dancing Script', cursive;
+  font-weight: 700;
+  color: #6c4fd6;
+  font-size: 2.5rem;
+}
+.font-mistero .story-title {
+  font-family: 'Special Elite', monospace;
+  color: #3a3a5c;
+  font-size: 1.6rem;
+  letter-spacing: 0.03em;
+}
+.font-commedia .story-title {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 800;
+  color: #e0793c;
+  font-size: 1.95rem;
+}
+
+.right-page {
+  padding: 12% 22% 26% 10%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
-  overflow: hidden;
+  box-sizing: border-box;
 }
-.image-page img {
+.postcard {
+  position: relative;
+  transform: rotate(-2deg);
+  width: 78%;
+  max-width: 330px;
+  background: white;
+  padding: 0.5rem;
+  border-radius: 6px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+}
+.tape {
+  position: absolute;
+  left: 50%;
+  width: 68px;
+  height: 26px;
+  background: #f3c6d6;
+  opacity: 0.85;
+  z-index: 2;
+}
+.tape-top {
+  top: -13px;
+  transform: translateX(-50%) rotate(-3deg);
+}
+.tape-bottom {
+  bottom: -13px;
+  transform: translateX(-50%) rotate(4deg);
+}
+.postcard-img {
+  display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.text-page h2 {
-  color: #6c4fd6;
-  font-size: 1.2rem;
-}
-.text-page p {
-  color: #444;
-  line-height: 1.6;
-  font-size: 0.9rem;
+  height: auto;
+  border-radius: 3px;
 }
 .actions {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 1rem;
 }
 .secondary-btn {
@@ -137,6 +285,10 @@ h1 {
   border: 1px solid #ddd;
   background: white;
   cursor: pointer;
+}
+.secondary-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
 .primary-btn {
   padding: 0.7rem 1.5rem;
@@ -151,10 +303,5 @@ h1 {
   margin-top: 1rem;
   font-size: 0.8rem;
   color: #999;
-}
-@media (max-width: 700px) {
-  .book-spread {
-    grid-template-columns: 1fr;
-  }
 }
 </style>
