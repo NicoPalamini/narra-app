@@ -1,31 +1,72 @@
 <template>
   <div class="storia-pronta">
-    <h1>✨ La tua storia è pronta! ✨</h1>
-    <p class="subtitle">Ecco la storia speciale che abbiamo creato per {{ storyDraft.characterName }}.</p>
+    <template v-if="!loading">
+      <h1 v-if="!isFromArchive">✨ La tua storia è pronta! ✨</h1>
+      <p class="subtitle" v-if="!isFromArchive">Ecco la storia speciale che abbiamo creato per {{ display.characterName }}.</p>
 
-    <div class="book-spread">
-      <div class="book-page image-page">
-        <img v-if="storyDraft.imageBase64" :src="storyDraft.imageBase64" alt="" />
+      <div class="book-spread">
+        <div class="book-page image-page">
+          <img v-if="display.imageBase64" :src="display.imageBase64" alt="" />
+        </div>
+        <div class="book-page text-page">
+          <h2>{{ display.titolo }}</h2>
+          <p>{{ display.testo }}</p>
+        </div>
       </div>
-      <div class="book-page text-page">
-        <h2>{{ storyDraft.titolo }}</h2>
-        <p>{{ storyDraft.testo }}</p>
-      </div>
-    </div>
 
-    <div class="actions">
-      <button class="secondary-btn" @click="rigenera">↻ Rigenera la storia</button>
-      <button class="primary-btn" @click="vaiArchivio">Vai all'Archivio</button>
-    </div>
-    <p class="footer-hint">🔒 La tua storia è al sicuro e sempre disponibile per te.</p>
+      <div class="actions">
+        <button v-if="!isFromArchive" class="secondary-btn" @click="rigenera">↻ Rigenera la storia</button>
+        <button class="primary-btn" @click="vaiArchivio">Vai all'Archivio</button>
+      </div>
+      <p class="footer-hint">🔒 La tua storia è al sicuro e sempre disponibile per te.</p>
+    </template>
   </div>
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { doc, getDoc } from 'firebase/firestore'
+import { db } from '../firebase'
 import { storyDraft } from '../store'
 
+const route = useRoute()
 const router = useRouter()
+
+const isFromArchive = ref(false)
+const loading = ref(true)
+const display = ref({
+  characterName: '',
+  imageBase64: null,
+  titolo: '',
+  testo: '',
+})
+
+onMounted(async () => {
+  const id = route.params.id
+
+  if (id) {
+    isFromArchive.value = true
+    const snap = await getDoc(doc(db, 'storie', id))
+    if (snap.exists()) {
+      const data = snap.data()
+      display.value = {
+        characterName: data.characterName,
+        imageBase64: data.imageBase64,
+        titolo: data.titolo,
+        testo: data.testo,
+      }
+    }
+  } else {
+    display.value = {
+      characterName: storyDraft.characterName,
+      imageBase64: storyDraft.imageBase64,
+      titolo: storyDraft.titolo,
+      testo: storyDraft.testo,
+    }
+  }
+  loading.value = false
+})
 
 function rigenera() {
   router.push('/generazione')
@@ -55,7 +96,7 @@ h1 {
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
   text-align: left;
-  margin-bottom: 2rem;
+  margin: 2rem 0;
 }
 .book-page {
   background: white;

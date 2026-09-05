@@ -11,7 +11,7 @@ const router = createRouter({
     { path: '/', name: 'home', component: HomeView },
     { path: '/crea', name: 'crea-storia', component: CreaStoriaView },
     { path: '/generazione', name: 'generazione', component: GenerazioneView },
-    { path: '/storia', name: 'storia-pronta', component: StoriaProntaView },
+    { path: '/storia/:id?', name: 'storia-pronta', component: StoriaProntaView },
     { path: '/archivio', name: 'archivio', component: ArchivioView },
   ],
 })
