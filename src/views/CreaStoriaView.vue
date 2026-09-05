@@ -3,7 +3,7 @@
     <img :src="fioreIcon" alt="" class="corner-decoration corner-bottom-left" />
 
     <div class="page-header">
-      <h1>Trasformiamo il tuo giocattolo <span class="highlight">in una storia.</span></h1>
+      <h1>Trasformiamo il suo giocattolo <span class="highlight">in una storia.</span></h1>
       <p class="subtitle">Carica una foto o un disegno, dai un nome al protagonista e personalizza la storia come vuoi tu.</p>
     </div>
 
@@ -103,6 +103,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { storyDraft } from '../store'
 
 import fioreIcon from '../assets/fiore.png'
 import fotoProva from '../assets/fotoprova.png'
@@ -132,19 +133,50 @@ const storyTypes = [
 
 const styles = [
   { id: 'acquerello', thumbnail: stileAcquarello, label: 'Acquerello' },
-  { id: 'gonfio', thumbnail: stileBaloon, label: 'Palloncino' },
-  { id: 'mattoncini', thumbnail: stileMattoncini, label: 'Mattoncini' },
+  { id: 'gonfio', thumbnail: stileBaloon, label: 'Gonfio 3D' },
+  { id: 'mattoncini', thumbnail: stileMattoncini, label: 'Mattoncini 3D' },
   { id: 'feltro', thumbnail: stileFeltro, label: 'Feltro' },
 ]
 
 function handleFileChange(event) {
   const file = event.target.files[0]
-  if (file) {
-    imagePreview.value = URL.createObjectURL(file)
+  if (!file) return
+
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    const img = new Image()
+    img.onload = () => {
+      const maxSize = 800
+      let width = img.width
+      let height = img.height
+
+      if (width > height && width > maxSize) {
+        height = Math.round((height * maxSize) / width)
+        width = maxSize
+      } else if (height > maxSize) {
+        width = Math.round((width * maxSize) / height)
+        height = maxSize
+      }
+
+      const canvas = document.createElement('canvas')
+      canvas.width = width
+      canvas.height = height
+      const ctx = canvas.getContext('2d')
+      ctx.drawImage(img, 0, 0, width, height)
+
+      const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7)
+      storyDraft.imageBase64 = compressedBase64
+      imagePreview.value = compressedBase64
+    }
+    img.src = e.target.result
   }
+  reader.readAsDataURL(file)
 }
 
 function creaStoria() {
+  storyDraft.characterName = characterName.value
+  storyDraft.storyType = storyType.value
+  storyDraft.illustrationStyle = illustrationStyle.value
   router.push('/generazione')
 }
 </script>
@@ -379,8 +411,8 @@ h1 {
   justify-content: center;
 }
 .option-icon-img {
-  width: 3.8rem;   
-  height: 3.8rem;  
+  width: 3.8rem;
+  height: 3.8rem;
   object-fit: contain;
 }
 .option-card strong {
