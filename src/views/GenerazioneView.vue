@@ -36,13 +36,17 @@
               class="puzzle-cell"
               :class="cellClasses(idx)"
               :style="pieceStyle(cell)"
+              :draggable="cell !== null"
               @click="tryMove(idx)"
+              @dragstart="onDragStart(idx, $event)"
+              @dragover.prevent
+              @drop="onDrop(idx, $event)"
             >
               <span v-if="cell !== null && !puzzleImg" class="puzzle-icon">{{ fallbackIcons[cell] }}</span>
             </button>
           </div>
           <p v-if="puzzleSolved" class="puzzle-win">🎉 Risolto! Nuova immagine in arrivo...</p>
-          <p v-else class="puzzle-hint">Sposta i pezzi ↔</p>
+          <p v-else class="puzzle-hint">Sposta i pezzi ↔ (clic o trascina)</p>
         </div>
       </div>
       <p class="loader-caption">Sto scrivendo la storia e dipingendo l'illustrazione...</p>
@@ -175,8 +179,6 @@ const lightings = [
 const puzzleImg = ref(null)
 const fallbackIcons = ['🌸', '⭐', '🎨', '🍄', '🌙', '💫', '🦋', '🍀']
 const fallbackClasses = ['fc-1', 'fc-2', 'fc-3', 'fc-4', 'fc-5', 'fc-6', 'fc-7', 'fc-8']
-// Posizione dello sfondo per ciascuno degli 8 pezzi (il 9° quadrante,
-// in basso a destra, resta sempre vuoto)
 const quadrantPositions = [
   '0% 0%', '50% 0%', '100% 0%',
   '0% 50%', '50% 50%', '100% 50%',
@@ -192,6 +194,7 @@ const adjacency = {
 const puzzleCells = ref([...solvedPuzzle])
 const puzzleSolved = ref(false)
 let puzzleResetTimeout = null
+let dragSourceIndex = null
 
 function isSolved(cells) {
   return cells.every((c, i) => c === solvedPuzzle[i])
@@ -236,6 +239,29 @@ function tryMove(idx) {
   }
 }
 
+// Drag & drop: si trascina un pezzo e lo si rilascia sullo spazio
+// vuoto. Riusa tryMove, che già controlla che il pezzo trascinato
+// sia adiacente allo spazio vuoto — stessa regola del click.
+function onDragStart(idx, e) {
+  dragSourceIndex = idx
+  if (e.dataTransfer) {
+    e.dataTransfer.effectAllowed = 'move'
+    e.dataTransfer.setData('text/plain', String(idx))
+  }
+}
+
+function onDrop(idx, e) {
+  e.preventDefault()
+  const sourceIdx = dragSourceIndex !== null
+    ? dragSourceIndex
+    : parseInt(e.dataTransfer.getData('text/plain'), 10)
+  dragSourceIndex = null
+  if (sourceIdx === null || Number.isNaN(sourceIdx)) return
+  // Si può rilasciare solo sullo spazio vuoto
+  if (puzzleCells.value[idx] !== null) return
+  tryMove(sourceIdx)
+}
+
 function cellClasses(idx) {
   const cell = puzzleCells.value[idx]
   const classes = []
@@ -274,8 +300,6 @@ async function fetchPuzzleImage() {
   }
 }
 
-// Quando il puzzle viene risolto: prende una nuova immagine a caso e
-// ricomincia mescolato, così il gioco continua a variare mentre si aspetta.
 async function advancePuzzle() {
   await fetchPuzzleImage()
   shufflePuzzle()
@@ -627,6 +651,12 @@ h1 {
   background: rgba(0, 0, 0, 0.05);
   box-shadow: none;
   cursor: default;
+}
+.puzzle-cell.movable {
+  cursor: grab;
+}
+.puzzle-cell.movable:active {
+  cursor: grabbing;
 }
 .puzzle-cell.movable:hover {
   transform: scale(1.06);

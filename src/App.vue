@@ -4,6 +4,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth'
 import { auth, googleProvider } from './firebase'
 import logoUrl from './assets/logo.png'
+import MagicBackground from './components/MagicBackground.vue'
 
 const currentUser = ref(null)
 const avatarFailed = ref(false)
@@ -57,6 +58,8 @@ onUnmounted(() => {
 </script>
 
 <template>
+  <MagicBackground />
+
   <header class="app-header">
     <RouterLink to="/" class="logo">
       <img :src="logoUrl" alt="Narrà" class="logo-img" />
@@ -101,7 +104,7 @@ onUnmounted(() => {
   align-items: center;
 }
 .logo-img {
-  height: 38px;
+  height: 45px;
   width: auto;
 }
 .header-actions {

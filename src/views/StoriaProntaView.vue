@@ -5,9 +5,6 @@
       <p class="subtitle" v-if="!isFromArchive">Ecco la storia speciale che abbiamo creato per {{ display.characterName }}.</p>
 
       <div class="book-stage">
-        <span class="stage-blob blob-a"></span>
-        <span class="stage-blob blob-b"></span>
-        <span class="stage-blob blob-c"></span>
         <span class="stage-sparkle ss-1">✦</span>
         <span class="stage-sparkle ss-2">✧</span>
         <span class="stage-sparkle ss-3">⋆</span>
@@ -17,7 +14,7 @@
           <div class="book-content">
             <div class="left-page" :class="'font-' + display.storyType">
               <h2 class="story-title">{{ display.titolo }}</h2>
-              <p class="story-text" v-html="formattedTesto"></p>
+              <p class="story-text story-text-in-book" v-html="formattedTesto"></p>
             </div>
             <div class="right-page">
               <div class="postcard">
@@ -28,6 +25,10 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <div class="story-text-box">
+        <p class="story-text" v-html="formattedTesto"></p>
       </div>
 
       <div class="actions">
@@ -80,10 +81,6 @@ const display = ref({
 
 const fiabaImg = computed(() => libriPerStile[display.value.illustrationStyle] || fiabaAcquerello)
 
-// Converte **parola** in grassetto vero. Per le onomatopee, prima cerca
-// ~~parola~~ (il modo corretto che chiediamo all'AI); come rete di
-// sicurezza, se l'AI si dimentica i tildi, cerca anche parole scritte
-// per intero in MAIUSCOLO (es. "PLIN", "TAC") e le stilizza comunque.
 const formattedTesto = computed(() => {
   let html = display.value.testo || ''
   html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
@@ -183,23 +180,6 @@ h1 {
   margin: 2rem 0;
 }
 
-.stage-blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(45px);
-  opacity: 0.5;
-  z-index: 0;
-  pointer-events: none;
-  animation: blob-float 8s ease-in-out infinite;
-}
-.blob-a { width: 280px; height: 280px; background: #c9a6f0; top: -70px; left: -50px; animation-delay: 0s; }
-.blob-b { width: 240px; height: 240px; background: #f3c6d6; bottom: -60px; right: -40px; animation-delay: 2.5s; }
-.blob-c { width: 190px; height: 190px; background: #f5c76e; top: 45%; right: -70px; animation-delay: 5s; }
-@keyframes blob-float {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(14px, -14px) scale(1.08); }
-}
-
 .stage-sparkle {
   position: absolute;
   z-index: 1;
@@ -246,12 +226,15 @@ h1 {
   font-weight: 800;
   line-height: 1.15;
   margin: 0 0 0.9rem;
-  font-size: 1.75rem;
+  font-size: clamp(1rem, 4vw, 1.75rem);
   letter-spacing: 0.01em;
   flex-shrink: 0;
   overflow-wrap: break-word;
+  text-align: center;
+  text-wrap: balance;
 }
-.story-text {
+
+.story-text-in-book {
   color: #4a3f33;
   line-height: 1.6;
   font-size: 0.63rem;
@@ -285,25 +268,25 @@ h1 {
   font-family: 'Kalam', cursive;
   font-weight: 700;
   color: #b5563a;
-  font-size: 1.9rem;
+  font-size: clamp(1.05rem, 4.3vw, 1.9rem);
 }
 .font-magia .story-title {
   font-family: 'Dancing Script', cursive;
   font-weight: 700;
   color: #6c4fd6;
-  font-size: 2.5rem;
+  font-size: clamp(1.15rem, 5.5vw, 2.5rem);
 }
 .font-mistero .story-title {
   font-family: 'Special Elite', monospace;
   color: #3a3a5c;
-  font-size: 1.6rem;
+  font-size: clamp(0.95rem, 3.7vw, 1.6rem);
   letter-spacing: 0.03em;
 }
 .font-commedia .story-title {
   font-family: 'Baloo 2', cursive;
   font-weight: 800;
   color: #e0793c;
-  font-size: 1.95rem;
+  font-size: clamp(1.05rem, 4.3vw, 1.95rem);
 }
 
 .right-page {
@@ -347,6 +330,25 @@ h1 {
   height: auto;
   border-radius: 3px;
 }
+
+.story-text-box {
+  display: none;
+  background: #fdfaf5;
+  border-radius: 20px;
+  padding: 1.6rem 1.6rem;
+  max-width: 680px;
+  margin: 0 auto 2rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  text-align: left;
+}
+.story-text-box .story-text {
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: #4a3f33;
+  margin: 0;
+  overflow-wrap: break-word;
+}
+
 .actions {
   display: flex;
   justify-content: center;
@@ -377,5 +379,33 @@ h1 {
   margin-top: 1rem;
   font-size: 0.8rem;
   color: #999;
+}
+
+@media (max-width: 1000px) {
+  .left-page {
+    padding: 24% 29% 30% 29%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .story-text-in-book {
+    display: none;
+  }
+  .story-title {
+    margin: 0;
+  }
+  .story-text-box {
+    display: block;
+  }
+  .tape {
+    width: 42px;
+    height: 16px;
+  }
+  .tape-top {
+    top: -8px;
+  }
+  .tape-bottom {
+    bottom: -8px;
+  }
 }
 </style>

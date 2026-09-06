@@ -132,7 +132,6 @@ function shortExcerpt(testo) {
   return tagliato.slice(0, ultimoSpazio > 0 ? ultimoSpazio : maxLen) + '…'
 }
 
-// Su mobile mostriamo 4 storie (2+2), su desktop 12 (due file da 6)
 function pickVisibleStories() {
   const limit = isMobile.value ? 4 : 12
   if (allStories.value.length <= limit) {
@@ -143,8 +142,6 @@ function pickVisibleStories() {
   }
 }
 
-// Riavvia il timer di rotazione con la durata giusta per la modalità attuale
-// (5s su mobile, 10s su desktop)
 function startRotation() {
   if (rotationInterval) clearInterval(rotationInterval)
   const intervalMs = isMobile.value ? 5000 : 10000
@@ -241,6 +238,9 @@ h1 {
   inset: 0;
   padding: 3rem;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .empty-msg {
   text-align: center;
@@ -430,21 +430,18 @@ h1 {
   }
 }
 
-/* Mobile: niente immagine della bacheca, sfondo neutro al suo posto,
-   griglia 2x2 e testo scuro (prima era bianco, pensato per stare
-   sopra l'immagine scura del sughero) */
 @media (max-width: 600px) {
   .corkboard-bg {
     display: none;
   }
   .corkboard {
-    background: #f3ecfd;
-    border-radius: 20px;
-    border: 1px solid #e4d9f7;
+    background: transparent;
+    border-radius: 0;
+    border: none;
   }
   .corkboard-content {
     position: static;
-    padding: 1.2rem;
+    padding: 1.2rem 0;
   }
   .empty-msg {
     color: #666;

@@ -28,12 +28,6 @@
           </div>
         </div>
         <p class="hint">💡 Consiglio: sfondo chiaro, immagine in primo piano</p>
-
-        <div class="submit-row">
-          <button class="submit-button" :disabled="!isFormValid" @click="creaStoria">Crea la mia storia</button>
-          <p v-if="!isFormValid" class="validation-hint">Carica una foto e scrivi il nome del personaggio per continuare.</p>
-          <p v-else class="footer-hint">🔒 Il processo è gratuito, veloce e sicuro.</p>
-        </div>
       </div>
 
       <div class="right-col">
@@ -96,6 +90,12 @@
             </button>
           </div>
         </div>
+      </div>
+
+      <div class="submit-row">
+        <button class="submit-button" :disabled="!isFormValid" @click="creaStoria">Crea la mia storia</button>
+        <p v-if="!isFormValid" class="validation-hint">Carica una foto e scrivi il nome del personaggio per continuare.</p>
+        <p v-else class="footer-hint">🔒 Il processo è gratuito, veloce e sicuro.</p>
       </div>
     </div>
   </div>
@@ -211,16 +211,32 @@ h1 {
   margin: 0;
   max-width: 600px;
 }
+
 .main-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  align-items: stretch;
+  grid-template-areas:
+    "left right"
+    "submit right";
+  gap: 1rem 4rem;
+  align-items: start;
 }
 .left-col {
+  grid-area: left;
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
+}
+.right-col {
+  grid-area: right;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+.submit-row {
+  grid-area: submit;
+  padding-top: 0.5rem;
+  text-align: center;
 }
 .upload-row {
   display: grid;
@@ -307,11 +323,6 @@ h1 {
   padding: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
-.submit-row {
-  margin-top: auto;
-  padding-top: 1.5rem;
-  text-align: center;
-}
 .submit-button {
   background: #6c4fd6;
   color: white;
@@ -335,11 +346,6 @@ h1 {
   font-size: 0.75rem;
   color: #999;
   margin: 0.6rem 0 0;
-}
-.right-col {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
 }
 .field-card {
   background: white;
@@ -453,9 +459,15 @@ h1 {
   pointer-events: none;
   z-index: -1;
 }
+
 @media (max-width: 800px) {
   .main-grid {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      "left"
+      "right"
+      "submit";
+    gap: 1.5rem;
   }
   .upload-row {
     grid-template-columns: 1fr;
