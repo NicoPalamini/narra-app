@@ -4,18 +4,27 @@
       <h1 v-if="!isFromArchive">✨ La tua storia è pronta! ✨</h1>
       <p class="subtitle" v-if="!isFromArchive">Ecco la storia speciale che abbiamo creato per {{ display.characterName }}.</p>
 
-      <div class="book-frame" ref="bookFrameRef">
-        <img :src="fiabaImg" alt="" class="book-bg" />
-        <div class="book-content">
-          <div class="left-page" :class="'font-' + display.storyType">
-            <h2 class="story-title">{{ display.titolo }}</h2>
-            <p class="story-text" v-html="formattedTesto"></p>
-          </div>
-          <div class="right-page">
-            <div class="postcard">
-              <span class="tape tape-top"></span>
-              <span class="tape tape-bottom"></span>
-              <img v-if="display.illustrazioneBase64" :src="display.illustrazioneBase64" alt="" class="postcard-img" />
+      <div class="book-stage">
+        <span class="stage-blob blob-a"></span>
+        <span class="stage-blob blob-b"></span>
+        <span class="stage-blob blob-c"></span>
+        <span class="stage-sparkle ss-1">✦</span>
+        <span class="stage-sparkle ss-2">✧</span>
+        <span class="stage-sparkle ss-3">⋆</span>
+
+        <div class="book-frame" ref="bookFrameRef">
+          <img :src="fiabaImg" alt="" class="book-bg" />
+          <div class="book-content">
+            <div class="left-page" :class="'font-' + display.storyType">
+              <h2 class="story-title">{{ display.titolo }}</h2>
+              <p class="story-text" v-html="formattedTesto"></p>
+            </div>
+            <div class="right-page">
+              <div class="postcard">
+                <span class="tape tape-top"></span>
+                <span class="tape tape-bottom"></span>
+                <img v-if="display.illustrazioneBase64" :src="display.illustrazioneBase64" alt="" class="postcard-img" />
+              </div>
             </div>
           </div>
         </div>
@@ -71,8 +80,21 @@ const display = ref({
 
 const fiabaImg = computed(() => libriPerStile[display.value.illustrationStyle] || fiabaAcquerello)
 
+// Converte **parola** in grassetto vero. Per le onomatopee, prima cerca
+// ~~parola~~ (il modo corretto che chiediamo all'AI); come rete di
+// sicurezza, se l'AI si dimentica i tildi, cerca anche parole scritte
+// per intero in MAIUSCOLO (es. "PLIN", "TAC") e le stilizza comunque.
 const formattedTesto = computed(() => {
-  return (display.value.testo || '').replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+  let html = display.value.testo || ''
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+  let onomCount = 0
+  html = html.replace(/~~(.+?)~~|\b([A-ZÀ-Ù]{2,8})\b/g, (match, tildeWord, capsWord) => {
+    const word = tildeWord !== undefined ? tildeWord : capsWord
+    const variant = (onomCount % 4) + 1
+    onomCount++
+    return `<span class="onomatopea onom-${variant}">${word}</span>`
+  })
+  return html
 })
 
 onMounted(async () => {
@@ -155,9 +177,49 @@ h1 {
   color: #666;
   margin-bottom: 2rem;
 }
-.book-frame {
+
+.book-stage {
   position: relative;
   margin: 2rem 0;
+}
+
+.stage-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(45px);
+  opacity: 0.5;
+  z-index: 0;
+  pointer-events: none;
+  animation: blob-float 8s ease-in-out infinite;
+}
+.blob-a { width: 280px; height: 280px; background: #c9a6f0; top: -70px; left: -50px; animation-delay: 0s; }
+.blob-b { width: 240px; height: 240px; background: #f3c6d6; bottom: -60px; right: -40px; animation-delay: 2.5s; }
+.blob-c { width: 190px; height: 190px; background: #f5c76e; top: 45%; right: -70px; animation-delay: 5s; }
+@keyframes blob-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(14px, -14px) scale(1.08); }
+}
+
+.stage-sparkle {
+  position: absolute;
+  z-index: 1;
+  color: #f5c76e;
+  font-size: 1.2rem;
+  opacity: 0;
+  pointer-events: none;
+  animation: sparkle-twinkle 3.2s ease-in-out infinite;
+}
+.ss-1 { top: -20px; left: 20%; animation-delay: 0s; color: #f5c76e; }
+.ss-2 { top: 30%; right: -14px; font-size: 1rem; animation-delay: 1.1s; color: #c9527a; }
+.ss-3 { bottom: -16px; left: 12%; font-size: 0.9rem; animation-delay: 2.2s; color: #6c4fd6; }
+@keyframes sparkle-twinkle {
+  0%, 100% { opacity: 0; transform: scale(0.5) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.2) rotate(18deg); }
+}
+
+.book-frame {
+  position: relative;
+  z-index: 2;
 }
 .book-bg {
   display: block;
@@ -191,7 +253,7 @@ h1 {
 }
 .story-text {
   color: #4a3f33;
-  line-height: 1.45;
+  line-height: 1.6;
   font-size: 0.63rem;
   font-weight: 400;
   margin: 0;
@@ -207,6 +269,18 @@ h1 {
   font-weight: 700;
   color: #2f2718;
 }
+.story-text .onomatopea {
+  display: inline-block;
+  font-weight: 800;
+  font-size: 1.15rem;
+  line-height: 1;
+  margin: 0 0.15em;
+  vertical-align: -0.05em;
+}
+.onom-1 { color: #e0793c; transform: rotate(-4deg); }
+.onom-2 { color: #6c4fd6; transform: rotate(3deg); }
+.onom-3 { color: #c9527a; transform: rotate(-3deg); }
+.onom-4 { color: #3a9188; transform: rotate(4deg); }
 .font-avventura .story-title {
   font-family: 'Kalam', cursive;
   font-weight: 700;
