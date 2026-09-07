@@ -5,7 +5,7 @@
         <span class="badge">✨ L'AI che trasforma i ricordi in storie</span>
         <h1>Il suo giocattolo preferito<br /><span class="highlight">diventa il protagonista.</span></h1>
         <p>Carica una foto del suo peluche, bambola o giocattolo del cuore: in pochi secondi diventa il personaggio di una breve storia illustrata, pronta da leggere insieme prima della nanna.</p>
-        <RouterLink to="/crea" class="cta-button">
+        <RouterLink to="/crea" class="cta-button cta-button-desktop">
           Crea la tua prima storia
           <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
             <path d="M5 12h14M13 6l6 6-6 6" />
@@ -54,6 +54,13 @@
         </div>
       </div>
     </section>
+
+    <RouterLink to="/crea" class="cta-button cta-button-mobile">
+      Crea la tua prima storia
+      <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12h14M13 6l6 6-6 6" />
+      </svg>
+    </RouterLink>
   </div>
 </template>
 
@@ -124,8 +131,10 @@ h1 {
   font-weight: 600;
 }
 
-/* Freccia disegnata a mano invece dell'SVG esterno, con tratto
-   spesso (stroke-width 3) e colore ereditato dal testo del pulsante */
+.cta-button-mobile {
+  display: none;
+}
+
 .cta-arrow {
   width: 18px;
   height: 18px;
@@ -255,6 +264,15 @@ h1 {
   }
   .steps-grid {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .cta-button-desktop {
+    display: none;
+  }
+  .cta-button-mobile {
+    display: inline-flex;
+    align-self: center;
+    margin-top: 0.5rem;
   }
 }
 </style>

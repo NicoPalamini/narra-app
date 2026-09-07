@@ -21,7 +21,7 @@
   position: absolute;
   border-radius: 50%;
   filter: blur(60px);
-  opacity: 0.22;
+  opacity: 0.28;
 }
 
 .blob-a {

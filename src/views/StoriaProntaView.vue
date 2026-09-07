@@ -5,9 +5,13 @@
       <p class="subtitle" v-if="!isFromArchive">Ecco la storia speciale che abbiamo creato per {{ display.characterName }}.</p>
 
       <div class="book-stage">
+        <span class="book-glow"></span>
         <span class="stage-sparkle ss-1">✦</span>
         <span class="stage-sparkle ss-2">✧</span>
         <span class="stage-sparkle ss-3">⋆</span>
+        <span class="stage-sparkle ss-4">✩</span>
+        <span class="stage-sparkle ss-5">✦</span>
+        <span class="stage-sparkle ss-6">✧</span>
 
         <div class="book-frame" ref="bookFrameRef">
           <img :src="fiabaImg" alt="" class="book-bg" />
@@ -180,18 +184,38 @@ h1 {
   margin: 2rem 0;
 }
 
+.book-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 92%;
+  height: 100%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(198, 158, 240, 0.4) 0%, rgba(243, 198, 214, 0.25) 45%, rgba(245, 199, 110, 0) 75%);
+  filter: blur(40px);
+  animation: book-glow-pulse 6s ease-in-out infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+@keyframes book-glow-pulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.85; }
+  50% { transform: translate(-50%, -50%) scale(1.06); opacity: 1; }
+}
+
 .stage-sparkle {
   position: absolute;
   z-index: 1;
-  color: #f5c76e;
   font-size: 1.2rem;
   opacity: 0;
   pointer-events: none;
-  animation: sparkle-twinkle 3.2s ease-in-out infinite;
+  animation: sparkle-twinkle 3.4s ease-in-out infinite;
 }
-.ss-1 { top: -20px; left: 20%; animation-delay: 0s; color: #f5c76e; }
-.ss-2 { top: 30%; right: -14px; font-size: 1rem; animation-delay: 1.1s; color: #c9527a; }
-.ss-3 { bottom: -16px; left: 12%; font-size: 0.9rem; animation-delay: 2.2s; color: #6c4fd6; }
+.ss-1 { top: -22px; left: 18%; color: #f5c76e; animation-delay: 0s; }
+.ss-2 { top: 28%; right: -18px; font-size: 1rem; color: #c9527a; animation-delay: 0.6s; }
+.ss-3 { bottom: -18px; left: 10%; font-size: 0.95rem; color: #6c4fd6; animation-delay: 1.2s; }
+.ss-4 { bottom: 10%; right: -14px; font-size: 1.1rem; color: #3a9188; animation-delay: 1.8s; }
+.ss-5 { top: 45%; left: -20px; font-size: 0.9rem; color: #f5c76e; animation-delay: 2.4s; }
+.ss-6 { top: -14px; right: 22%; font-size: 1.05rem; color: #c9a6f0; animation-delay: 3s; }
 @keyframes sparkle-twinkle {
   0%, 100% { opacity: 0; transform: scale(0.5) rotate(0deg); }
   50% { opacity: 1; transform: scale(1.2) rotate(18deg); }
