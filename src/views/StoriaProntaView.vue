@@ -16,7 +16,7 @@
         <div class="book-frame" ref="bookFrameRef">
           <img :src="fiabaImg" alt="" class="book-bg" />
           <div class="book-content">
-            <div class="left-page" :class="'font-' + display.storyType">
+            <div class="left-page" :class="'font-' + display.illustrationStyle">
               <h2 class="story-title">{{ display.titolo }}</h2>
               <p class="story-text story-text-in-book" v-html="formattedTesto"></p>
             </div>
@@ -164,6 +164,8 @@ async function scaricaLibro() {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Butterfly+Kids&family=Geist+Pixel&family=Rubik+Bubbles&family=Barrio&display=swap');
+
 .storia-pronta {
   max-width: 1250px;
   margin: 3rem auto;
@@ -256,6 +258,7 @@ h1 {
   overflow-wrap: break-word;
   text-align: center;
   text-wrap: balance;
+  text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.15);
 }
 
 .story-text-in-book {
@@ -288,29 +291,31 @@ h1 {
 .onom-2 { color: #6c4fd6; transform: rotate(3deg); }
 .onom-3 { color: #c9527a; transform: rotate(-3deg); }
 .onom-4 { color: #3a9188; transform: rotate(4deg); }
-.font-avventura .story-title {
-  font-family: 'Kalam', cursive;
-  font-weight: 700;
-  color: #b5563a;
-  font-size: clamp(1.05rem, 4.3vw, 1.9rem);
-}
-.font-magia .story-title {
-  font-family: 'Dancing Script', cursive;
-  font-weight: 700;
+
+.font-acquerello .story-title {
+  font-family: 'Butterfly Kids', cursive;
+  font-weight: 400;
   color: #6c4fd6;
-  font-size: clamp(1.15rem, 5.5vw, 2.5rem);
+  font-size: clamp(1.3rem, 5.5vw, 2.4rem);
 }
-.font-mistero .story-title {
-  font-family: 'Special Elite', monospace;
-  color: #3a3a5c;
-  font-size: clamp(0.95rem, 3.7vw, 1.6rem);
-  letter-spacing: 0.03em;
+.font-gonfio .story-title {
+  font-family: 'Rubik Bubbles', cursive;
+  font-weight: 400;
+  color: #3a9188;
+  font-size: clamp(0.95rem, 3.8vw, 1.65rem);
 }
-.font-commedia .story-title {
-  font-family: 'Baloo 2', cursive;
-  font-weight: 800;
-  color: #e0793c;
-  font-size: clamp(1.05rem, 4.3vw, 1.95rem);
+.font-mattoncini .story-title {
+  font-family: 'Geist Pixel', monospace;
+  font-weight: 400;
+  color: #b5563a;
+  font-size: clamp(1rem, 4vw, 1.75rem);
+  letter-spacing: 0.02em;
+}
+.font-feltro .story-title {
+  font-family: 'Barrio', cursive;
+  font-weight: 400;
+  color: #c9527a;
+  font-size: clamp(1.05rem, 4.2vw, 1.85rem);
 }
 
 .right-page {

@@ -132,6 +132,12 @@ const locations = [
   'a hidden valley filled with giant mushrooms and glowing fireflies',
   'a pirate ship sailing across a sea of fluffy clouds',
   'a desert oasis with tall palm trees and a sparkling blue lagoon',
+  'a floating library among giant lily pads on a moonlit pond',
+  'a cozy toy workshop filled with wooden gears and glowing lanterns',
+  'a candy cane forest under a swirling twilight sky',
+  'a starlit meadow dotted with glowing mushrooms and fireflies',
+  'a cloud kingdom with staircases made of rainbows',
+  'an underground crystal cave sparkling with colorful gems',
 ]
 
 const locationsIt = [
@@ -149,6 +155,17 @@ const locationsIt = [
   'una valle nascosta piena di funghi giganti e lucciole luminose',
   'una nave pirata che naviga in un mare di nuvole soffici',
   "un'oasi nel deserto con alte palme e una laguna azzurra scintillante",
+  'una biblioteca galleggiante tra grandi foglie di ninfea su uno stagno illuminato dalla luna',
+  "un'accogliente officina di giocattoli piena di ingranaggi di legno e lanterne luminose",
+  'una foresta di zucchero filato sotto un cielo crepuscolare vorticoso',
+  'un prato stellato pieno di funghi luminosi e lucciole',
+  'un regno di nuvole con scale fatte di arcobaleni',
+  'una grotta di cristallo sotterranea scintillante di gemme colorate',
+  'una stanza piena di giocattoli giganti',
+  'un villagio di fate e animali magici',
+  'un museo antico di arte',
+  'su un animale volante, sotto una pioggia di coriandoli',
+   'una festa in costume in una piazza medievale',
 ]
 
 const poses = [
@@ -162,6 +179,12 @@ const poses = [
   'peeking out curiously from behind a giant flower or rock',
   'hugging a small friendly creature close with joy',
   'sliding down a rainbow or a giant slide with glee',
+  'spinning around with arms wide open, laughing',
+  'tiptoeing carefully across stepping stones',
+  'waving both arms high to say hello',
+  'crouching low to peek inside a tiny door',
+  'stretching upward on tiptoes reaching for a star',
+  'sitting cross-legged, deep in thought',
 ]
 
 const lightings = [
@@ -173,6 +196,19 @@ const lightings = [
   'cool blue moonlight filtering gently through leaves',
   'a rosy pink dawn light with soft drifting mist',
   'festive multicolored fairy lights glowing everywhere',
+]
+
+const emotions = [
+  'eyes wide with wonder and amazement',
+  'giggling with pure delight',
+  'a big warm joyful smile',
+  'curious and thoughtful expression',
+  'playful mischievous grin',
+  'calm and dreamy, eyes half closed',
+  'surprised, mouth open in awe',
+  'proud and confident expression',
+  'gentle loving expression',
+  'excited, eyes sparkling with energy',
 ]
 
 // ---- Puzzle scorrevole 3x3 (8 pezzi + 1 vuoto) ----
@@ -239,9 +275,6 @@ function tryMove(idx) {
   }
 }
 
-// Drag & drop: si trascina un pezzo e lo si rilascia sullo spazio
-// vuoto. Riusa tryMove, che già controlla che il pezzo trascinato
-// sia adiacente allo spazio vuoto — stessa regola del click.
 function onDragStart(idx, e) {
   dragSourceIndex = idx
   if (e.dataTransfer) {
@@ -257,7 +290,6 @@ function onDrop(idx, e) {
     : parseInt(e.dataTransfer.getData('text/plain'), 10)
   dragSourceIndex = null
   if (sourceIdx === null || Number.isNaN(sourceIdx)) return
-  // Si può rilasciare solo sullo spazio vuoto
   if (puzzleCells.value[idx] !== null) return
   tryMove(sourceIdx)
 }
@@ -385,7 +417,7 @@ Rispondi SOLO con un oggetto JSON in questo formato esatto, senza markdown e sen
   return JSON.parse(data.choices[0].message.content)
 }
 
-async function generateStoryImage(characterName, genereEn, moodEn, styleKey, photoDataUrl, location, pose, lighting) {
+async function generateStoryImage(characterName, genereEn, moodEn, styleKey, photoDataUrl, location, pose, emotion, lighting) {
   const style = styleDetails[styleKey] || styleDetails.acquerello
 
   const prompt = `Redraw the subject from the reference photo as ${style.intro}.
@@ -395,7 +427,7 @@ Ignore the character's name (${characterName}) when deciding its appearance — 
 
 STYLE (applies to the subject AND the entire background scene — do not leave any part of the image photorealistic or unstyled): ${style.styleBlock}
 
-The subject is ${pose}, set in ${location}, experiencing ${genereEn}. Lighting: ${lighting}. Remember: the location itself (${location}) must be rebuilt entirely out of the style material described above, not shown as a real place.
+The subject is ${pose}, with ${emotion}, set in ${location}, experiencing ${genereEn}. Lighting: ${lighting}. Remember: the location itself (${location}) must be rebuilt entirely out of the style material described above, not shown as a real place.
 ${style.negative}
 Depict only the one subject from the reference photo, optionally alongside animal or fantasy creatures — do not add extra human characters or children who are not the subject itself.
 No text, letters, numbers or words anywhere in the image.
@@ -434,6 +466,7 @@ async function creaLaStoria() {
 
     const locIndex = Math.floor(Math.random() * locations.length)
     const poseIndex = Math.floor(Math.random() * poses.length)
+    const emotionIndex = Math.floor(Math.random() * emotions.length)
     const lightingIndex = Math.floor(Math.random() * lightings.length)
 
     const [testoGenerato, immagineGrezza] = await Promise.all([
@@ -446,6 +479,7 @@ async function creaLaStoria() {
         storyDraft.imageBase64,
         locations[locIndex],
         poses[poseIndex],
+        emotions[emotionIndex],
         lightings[lightingIndex]
       ),
     ])
