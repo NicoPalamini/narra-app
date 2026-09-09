@@ -144,10 +144,9 @@ function pickVisibleStories() {
 
 function startRotation() {
   if (rotationInterval) clearInterval(rotationInterval)
-  const intervalMs = isMobile.value ? 5000 : 10000
   rotationInterval = setInterval(() => {
     pickVisibleStories()
-  }, intervalMs)
+  }, 5000)
 }
 
 function handleResize() {
@@ -155,7 +154,6 @@ function handleResize() {
   isMobile.value = window.innerWidth <= 600
   if (isMobile.value !== wasMobile) {
     pickVisibleStories()
-    startRotation()
   }
 }
 

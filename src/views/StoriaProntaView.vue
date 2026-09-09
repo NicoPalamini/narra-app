@@ -1,11 +1,13 @@
 <template>
   <div class="storia-pronta">
     <template v-if="!loading">
-      <h1 v-if="!isFromArchive">✨ La tua storia è pronta! ✨</h1>
+      <h1 v-if="!isFromArchive">La tua storia è pronta!</h1>
       <p class="subtitle" v-if="!isFromArchive">Ecco la storia speciale che abbiamo creato per {{ display.characterName }}.</p>
 
       <div class="book-stage">
         <span class="book-glow"></span>
+        <span class="book-glow book-glow-2"></span>
+
         <span class="stage-sparkle ss-1">✦</span>
         <span class="stage-sparkle ss-2">✧</span>
         <span class="stage-sparkle ss-3">⋆</span>
@@ -17,7 +19,7 @@
           <img :src="fiabaImg" alt="" class="book-bg" />
           <div class="book-content">
             <div class="left-page" :class="'font-' + display.illustrationStyle">
-              <h2 class="story-title">{{ display.titolo }}</h2>
+              <h2 class="story-title" :style="{ color: titleColor }">{{ display.titolo }}</h2>
               <p class="story-text story-text-in-book" v-html="formattedTesto"></p>
             </div>
             <div class="right-page">
@@ -36,13 +38,13 @@
       </div>
 
       <div class="actions">
-        <button v-if="!isFromArchive" class="secondary-btn" @click="rigenera">↻ Rigenera la storia</button>
+        <button v-if="!isFromArchive" class="secondary-btn" @click="rigenera">Rigenera la storia</button>
         <button class="secondary-btn" :disabled="salvando" @click="scaricaLibro">
-          {{ salvando ? '⏳ Un attimo...' : '⬇ Salva il libro' }}
+          {{ salvando ? 'Un attimo...' : 'Salva il libro' }}
         </button>
         <button class="primary-btn" @click="vaiArchivio">Vai all'Archivio</button>
       </div>
-      <p class="footer-hint">🔒 La tua storia è al sicuro e sempre disponibile per te.</p>
+      <p class="footer-hint">La tua storia è al sicuro e sempre disponibile per te.</p>
     </template>
   </div>
 </template>
@@ -59,12 +61,20 @@ import fiabaAcquerello from '../assets/fiaba-acquerello.png'
 import fiabaGonfio from '../assets/fiaba-gonfio.png'
 import fiabaMattoncini from '../assets/fiaba-mattoncini.png'
 import fiabaFeltro from '../assets/fiaba-feltro.png'
+import fiabaRealistico from '../assets/fiaba-realistico.png'
+import fiabaPixar3d from '../assets/fiaba-pixar3d.png'
+import fiabaSchizzo from '../assets/fiaba-schizzo.png'
+import fiabaDoodle from '../assets/fiaba-doodle.png'
 
 const libriPerStile = {
   acquerello: fiabaAcquerello,
   gonfio: fiabaGonfio,
   mattoncini: fiabaMattoncini,
   feltro: fiabaFeltro,
+  realistico: fiabaRealistico,
+  pixar3d: fiabaPixar3d,
+  schizzo: fiabaSchizzo,
+  doodle: fiabaDoodle,
 }
 
 const route = useRoute()
@@ -84,6 +94,18 @@ const display = ref({
 })
 
 const fiabaImg = computed(() => libriPerStile[display.value.illustrationStyle] || fiabaAcquerello)
+
+const titleColor = computed(() => {
+  const seed = (display.value.titolo || '') + (display.value.characterName || '')
+  let hash = 0
+  for (let i = 0; i < seed.length; i++) {
+    hash = (hash * 31 + seed.charCodeAt(i)) % 100000
+  }
+  const hue = 255 + (hash % 45)
+  const saturation = 55 + (hash % 20)
+  const lightness = 36 + (hash % 12)
+  return `hsl(${hue}, ${saturation}%, ${lightness}%)`
+})
 
 const formattedTesto = computed(() => {
   let html = display.value.testo || ''
@@ -164,7 +186,7 @@ async function scaricaLibro() {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Butterfly+Kids&family=Geist+Pixel&family=Rubik+Bubbles&family=Barrio&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Butterfly+Kids&family=Geist+Pixel&family=Rubik+Bubbles&family=Barrio&family=Rubik+Marker+Hatch&family=Chelsea+Market&family=Vampiro+One&family=Boldonse&display=swap');
 
 .storia-pronta {
   max-width: 1250px;
@@ -199,9 +221,21 @@ h1 {
   z-index: 0;
   pointer-events: none;
 }
+.book-glow-2 {
+  width: 70%;
+  height: 80%;
+  background: radial-gradient(circle, rgba(245, 199, 110, 0.35) 0%, rgba(58, 145, 136, 0.2) 50%, rgba(245, 199, 110, 0) 75%);
+  filter: blur(50px);
+  animation: book-glow-pulse-2 8s ease-in-out infinite;
+  animation-delay: 1.5s;
+}
 @keyframes book-glow-pulse {
   0%, 100% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.85; }
   50% { transform: translate(-50%, -50%) scale(1.06); opacity: 1; }
+}
+@keyframes book-glow-pulse-2 {
+  0%, 100% { transform: translate(-50%, -50%) scale(1.05) rotate(0deg); opacity: 0.6; }
+  50% { transform: translate(-50%, -50%) scale(0.9) rotate(6deg); opacity: 0.9; }
 }
 
 .stage-sparkle {
@@ -295,27 +329,44 @@ h1 {
 .font-acquerello .story-title {
   font-family: 'Butterfly Kids', cursive;
   font-weight: 400;
-  color: #6c4fd6;
   font-size: clamp(1.3rem, 5.5vw, 2.4rem);
 }
 .font-gonfio .story-title {
   font-family: 'Rubik Bubbles', cursive;
   font-weight: 400;
-  color: #3a9188;
   font-size: clamp(0.95rem, 3.8vw, 1.65rem);
 }
 .font-mattoncini .story-title {
   font-family: 'Geist Pixel', monospace;
   font-weight: 400;
-  color: #b5563a;
   font-size: clamp(1rem, 4vw, 1.75rem);
   letter-spacing: 0.02em;
 }
 .font-feltro .story-title {
   font-family: 'Barrio', cursive;
   font-weight: 400;
-  color: #c9527a;
   font-size: clamp(1.05rem, 4.2vw, 1.85rem);
+}
+.font-realistico .story-title {
+  font-family: 'Vampiro One', cursive;
+  font-weight: 400;
+  font-size: clamp(1rem, 4vw, 1.75rem);
+}
+.font-pixar3d .story-title {
+  font-family: 'Chelsea Market', cursive;
+  font-weight: 400;
+  font-size: clamp(1.05rem, 4.2vw, 1.85rem);
+}
+.font-schizzo .story-title {
+  font-family: 'Rubik Marker Hatch', cursive;
+  font-weight: 400;
+  font-size: clamp(0.95rem, 3.8vw, 1.6rem);
+  letter-spacing: 0.02em;
+}
+.font-doodle .story-title {
+  font-family: 'Boldonse', cursive;
+  font-weight: 400;
+  font-size: clamp(0.8rem, 3.2vw, 1.35rem);
 }
 
 .right-page {

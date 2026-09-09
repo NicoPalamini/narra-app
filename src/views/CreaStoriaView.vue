@@ -24,7 +24,6 @@
           <div class="polaroid">
             <span class="tape"></span>
             <img :src="imagePreview || fotoProva" alt="Anteprima personaggio" class="preview-img" />
-            <img :src="iconaBacchetta" alt="" class="wand-decoration" />
           </div>
         </div>
         <p class="hint">💡 Consiglio: sfondo chiaro, immagine in primo piano</p>
@@ -108,7 +107,6 @@ import { storyDraft } from '../store'
 
 import fioreIcon from '../assets/fiore.png'
 import fotoProva from '../assets/fotoprova.png'
-import iconaBacchetta from '../assets/iconabacchetta.png'
 import iconaAvventura from '../assets/iconaavventura.png'
 import iconaFantasy from '../assets/iconafantasy.png'
 import iconaMistero from '../assets/iconamistero.png'
@@ -117,6 +115,10 @@ import stileAcquarello from '../assets/stileacquarello.png'
 import stileBaloon from '../assets/stilebaloon.png'
 import stileMattoncini from '../assets/stilemattoncini.png'
 import stileFeltro from '../assets/stilefeltro.png'
+import stileRealistico from '../assets/stilerealistico.png'
+import stilePixar3d from '../assets/stilepixar3d.png'
+import stileSchizzo from '../assets/stileschizzo.png'
+import stileDoodle from '../assets/stiledoodle.png'
 
 const router = useRouter()
 
@@ -128,15 +130,19 @@ const imagePreview = ref(null)
 const storyTypes = [
   { id: 'avventura', icon: iconaAvventura, label: 'Avventura', description: 'Parte per un viaggio ed esplora' },
   { id: 'magia', icon: iconaFantasy, label: 'Magia', description: 'Scopre poteri e mondi incantati' },
-  { id: 'mistero', icon: iconaMistero, label: 'Mistero', description: 'Trova indizi e risolve enigmi' },
+  { id: 'brivido', icon: iconaMistero, label: 'Brivido', description: 'Piccoli brividi e buffi spaventi' },
   { id: 'commedia', icon: iconaCommedia, label: 'Commedia', description: 'Vive situazioni buffe e imprevedibili' },
 ]
 
 const styles = [
   { id: 'acquerello', thumbnail: stileAcquarello, label: 'Acquerello' },
-  { id: 'gonfio', thumbnail: stileBaloon, label: 'Gonfio 3D' },
-  { id: 'mattoncini', thumbnail: stileMattoncini, label: 'Mattoncini 3D' },
+  { id: 'gonfio', thumbnail: stileBaloon, label: 'Palloncini' },
+  { id: 'mattoncini', thumbnail: stileMattoncini, label: 'Mattoncini' },
   { id: 'feltro', thumbnail: stileFeltro, label: 'Feltro' },
+  { id: 'realistico', thumbnail: stileRealistico, label: 'Realistico' },
+  { id: 'pixar3d', thumbnail: stilePixar3d, label: 'Pixar' },
+  { id: 'schizzo', thumbnail: stileSchizzo, label: 'Schizzo a Matita' },
+  { id: 'doodle', thumbnail: stileDoodle, label: 'Doodle Cartoon' },
 ]
 
 const isFormValid = computed(() => {
@@ -193,7 +199,6 @@ function creaStoria() {
   max-width: 1400px;
   margin: 2rem auto 3rem;
   padding: 0 3rem;
-  overflow: hidden;
 }
 .page-header {
   margin-bottom: 1.8rem;
@@ -217,7 +222,7 @@ h1 {
   grid-template-columns: 1fr 1fr;
   grid-template-areas:
     "left right"
-    "submit right";
+    "submit submit";
   gap: 1rem 4rem;
   align-items: start;
 }
@@ -311,17 +316,6 @@ h1 {
   border-radius: 4px;
   object-fit: cover;
   aspect-ratio: 4 / 5;
-}
-.wand-decoration {
-  position: absolute;
-  bottom: -10px;
-  right: -10px;
-  width: 32px;
-  height: 32px;
-  background: white;
-  border-radius: 50%;
-  padding: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 .submit-button {
   background: #6c4fd6;
@@ -459,7 +453,6 @@ h1 {
   pointer-events: none;
   z-index: -1;
 }
-
 @media (max-width: 800px) {
   .main-grid {
     grid-template-columns: 1fr;

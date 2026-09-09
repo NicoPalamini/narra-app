@@ -19,13 +19,6 @@
         <span class="sparkle sp-5">✦</span>
         <span class="sparkle sp-6">✧</span>
 
-        <div class="wand-orbit">
-          <span class="wand">🪄</span>
-          <span class="wand-trail wt-1"></span>
-          <span class="wand-trail wt-2"></span>
-          <span class="wand-trail wt-3"></span>
-        </div>
-
         <div class="puzzle-wrap">
           <p class="puzzle-title">Ricomponi una storia della community</p>
           <div class="puzzle-grid">
@@ -83,37 +76,60 @@ let progressInterval = null
 const storyTypeLabels = {
   avventura: { it: "un'avventura di viaggio ed esplorazione", en: 'an adventurous journey of exploration' },
   magia: { it: 'una scoperta magica', en: 'a magical discovery' },
-  mistero: { it: 'un mistero pieno di indizi da risolvere', en: 'a mystery full of clues to solve' },
+  brivido: {
+    it: 'un\'avventura piena di brividi: fantasmi simpatici, mostriciattoli buffi, luoghi un po\' inquietanti ma mai davvero spaventosi, piccoli spaventi e un colpo di scena finale, raccontata sempre in modo adatto a bambini piccoli',
+    en: 'a spooky but playful adventure with friendly ghosts, silly little monsters, eerie-but-fun places, a few small scares and a surprising twist — never truly frightening, always kid-appropriate',
+  },
   commedia: { it: 'una situazione buffa e imprevedibile', en: 'a funny and silly lighthearted moment' },
 }
 
 const moodLabelsEn = {
   avventura: 'bright, energetic and adventurous',
   magia: 'dreamy, glowing and magical',
-  mistero: 'mysterious, moody twilight',
+  brivido: 'spooky yet playful and fun, moody twilight atmosphere with a mischievous, lighthearted edge — never genuinely scary',
   commedia: 'cheerful, playful and colorful',
 }
 
 const styleDetails = {
   acquerello: {
     intro: "a whimsical children's storybook watercolor illustration",
-    styleBlock: 'Traditional hand-painted watercolor throughout the ENTIRE image. Soft translucent washes, delicate pigment blooms, subtle color bleeding, visible paper grain, gentle irregular edges, layered pastel colors, fine hand-painted details. This applies not only to the subject but to every background element too: trees, sky, clouds, water, buildings, ground and foliage must all be painted with the same visible watercolor washes and paper texture, as if the whole scene is one continuous watercolor painting on a single sheet of paper.',
-    negative: 'Avoid digital-looking gradients, hard vector shapes, glossy 3D rendering, or photorealism anywhere in the image, including the background. No photographic skies, no photorealistic foliage or architecture.',
+    styleBlock: 'Traditional hand-painted watercolor throughout the ENTIRE image, painted on visible cold-press watercolor paper. Soft translucent washes with irregular, organic edges where pigment blooms and feathers into the wet paper; visible tiny paper fibers and subtle texture grain across every surface; delicate color bleeding where two wet washes touch and merge unpredictably; layered pastel tones built up in multiple thin transparent glazes rather than flat opaque color; occasional small unpainted white-paper highlights left deliberately; fine hand-painted linework done with a thin brush, slightly wobbly and imperfect, never a perfectly clean vector line. This applies not only to the subject but to every background element too: trees, sky, clouds, water, buildings and foliage must all be painted with the same visible watercolor washes, paper grain and soft bleeding edges, as if the entire scene is one continuous watercolor painting on a single physical sheet of paper.',
+    negative: 'Avoid digital-looking gradients, hard vector shapes, glossy 3D rendering, airbrushed smoothness, or photorealism anywhere in the image, including the background. No crisp clean outlines, no flat uniform color fills, no photographic skies, no photorealistic foliage or architecture.',
   },
   gonfio: {
-    intro: 'elaborate balloon art sculpture',
-    styleBlock: 'Professional balloon sculpture photography throughout the ENTIRE image. Every visible part physically constructed from inflated latex balloons, rounded balloon segments, twisted balloon joints, knots. Smooth glossy latex surfaces, realistic specular highlights, premium polished look like a modern 3D animated film character. This applies not only to the subject but to the entire background scene: trees are twisted balloon sculptures, clouds are round balloon shapes, buildings and rock formations are built from oversized balloon segments, the ground and water are stylized balloon-art shapes. Nothing in the frame should look like real photography.',
-    negative: 'Absolutely NOT a cheap bouncy-castle, pool-float, or amateur render look. Do not use fabric, felt, clay, plastic, paper, or toy bricks anywhere, including the background. The background must never look like a real photographed environment — it must be balloon sculpture too.',
+    intro: 'an elaborate balloon-twisting sculpture, photographed like a professional product photo',
+    styleBlock: 'Every single visible part of the ENTIRE image physically constructed from inflated latex balloons, photographed under studio lighting. Rounded tubular balloon segments twisted and knotted together at every joint, visible pinch-twists and small knot nubs where balloons connect, smooth glossy latex surface with sharp specular highlights and soft reflections exactly like real inflated rubber, slight sheen variation across curved surfaces, visible subtle wrinkles near tight twists. Premium polished look comparable to a high-end parade float or balloon-art exhibition piece, not a cheap party decoration. This applies not only to the subject but to the entire background scene: trees are twisted balloon trunks and round balloon-cluster foliage, clouds are clusters of round white balloons, buildings and rock formations are built from oversized sausage-shaped balloon segments stacked and twisted together, water and ground are stylized balloon-art shapes in flat sculptural forms.',
+    negative: 'Absolutely NOT a cheap bouncy-castle, inflatable pool-float, or amateur low-poly render look. Do not use fabric, felt, clay, plastic, paper, or toy bricks anywhere, including the background. No matte or dull surfaces — everything must have the glossy latex sheen of a real inflated balloon.',
   },
   feltro: {
-    intro: 'a handmade felt plush character',
-    styleBlock: 'Physically handmade from felt throughout the ENTIRE image, wool felt, soft fabric, embroidery thread. Fuzzy felt fibers, visible blanket stitching, hand-sewn seams, embroidered details, slightly imperfect handmade edges, soft stuffing. This applies not only to the subject but to the entire background scene: trees, bushes and mountains are made of stitched felt shapes with visible fabric texture, the sky and clouds are soft felt or fabric panels, buildings and rocks are handmade felt props, like a diorama built entirely from felt craft materials on a felt background.',
-    negative: 'Avoid plastic, glossy surfaces, smooth CGI, watercolor, clay, balloons, and building bricks anywhere in the image, including the background. The background must never look like a real photographed environment — it must be felt craft too.',
+    intro: 'a handmade felt plush character, photographed like a craft-fair product photo',
+    styleBlock: 'Every part of the ENTIRE image physically handmade from wool felt fabric and soft stuffing. Fuzzy, slightly fibrous felt surface texture visible up close on every shape; visible hand-sewn blanket stitching in a contrasting thread color running along every seam and edge; soft rounded stuffed forms with gentle lumps and slight asymmetry typical of handcrafted plush toys, never perfectly symmetric or machine-smooth; small hand-embroidered details (eyes, patterns, small decorations) with visible individual thread stitches; slightly frayed or fuzzy fiber edges where felt pieces meet. This applies not only to the subject but to the entire background scene: trees, bushes and mountains are stitched felt shapes with the same fibrous texture and visible stitching, the sky and clouds are soft felt or quilted fabric panels, buildings and rocks are handmade felt props with stuffing bulges, arranged like a physical diorama scene built entirely from craft materials on a felt backdrop.',
+    negative: 'Avoid plastic, glossy surfaces, smooth CGI rendering, watercolor washes, clay, inflated balloons, or interlocking toy bricks anywhere in the image, including the background. No perfectly smooth or machine-precise edges — everything should show the soft imperfection of handmade fabric craft.',
   },
   mattoncini: {
-    intro: 'a detailed physical toy-brick sculpture',
-    styleBlock: 'Every part physically built from small rectangular interlocking plastic toy bricks throughout the ENTIRE image, with visible round studs on top of each brick. Individual brick units and seams clearly visible everywhere, blocky geometric faceted look. Realistic glossy plastic material, subtle reflections. This applies not only to the subject but to the entire background scene: trees, buildings, mountains, clouds and ground must all be built from visible interlocking toy bricks with studs, like a large physical toy-brick diorama set, not a real environment.',
-    negative: 'Do not use fabric, felt, balloons, clay, watercolor, knitted textures anywhere, including the background. The original photo\'s fuzzy/fabric texture must completely disappear and be replaced by hard plastic brick geometry. The background must never look like a real photographed environment — it must be built from toy bricks too.',
+    intro: 'a detailed physical toy-brick sculpture, photographed like an official set product photo',
+    styleBlock: 'Every part of the ENTIRE image physically built from small rectangular interlocking plastic toy bricks, with clearly visible round studs on top of every single brick, including curved and rounded forms approximated with stepped brick geometry. Individual brick units, seams and stud rows are crisply visible everywhere, creating a blocky, faceted, geometric look with no smooth curves. Realistic glossy injection-molded plastic material with subtle specular highlights and soft ambient occlusion in the gaps between bricks, photographed under clean studio-style lighting like an official product shot. This applies not only to the subject but to the entire background scene: trees, buildings, mountains, clouds and ground must all be visibly constructed from interlocking studded bricks of varying sizes, like a large physical toy-brick diorama set, with visible brick seams throughout the entire environment, not just the subject.',
+    negative: 'Do not use fabric, felt, balloons, clay, watercolor, or knitted textures anywhere, including the background. The original photo\'s fuzzy or fabric texture must completely disappear and be replaced by hard plastic brick geometry. No smooth or curved organic surfaces — everything must read as blocky interlocking bricks with visible studs.',
+  },
+  realistico: {
+    intro: 'a professional photorealistic photograph of a real, physical collectible figurine or toy',
+    styleBlock: `Photorealistic professional product photography throughout the ENTIRE image, as if a real physical object was placed on a set and photographed with a high-end camera. IMPORTANT — subject handling: identify what the reference photo shows. If it already depicts a plush toy, doll, action figure, robot, or animal, photograph that same object with photorealistic material accuracy (real fabric weave, fur strands, painted plastic, metal sheen, glass eyes, as appropriate) exactly as it would look in a real high-end product photograph. If the reference photo instead shows a real person, do NOT render a photorealistic human — instead, reinterpret that person as a real, physical collectible figurine, vinyl toy, or poseable doll that captures their likeness (hairstyle, hair color, face shape, expression, clothing style, and color palette), photographed as an actual toy object sitting on a surface, with visible toy-making details like a slightly glossy vinyl or resin skin texture, subtle seam lines typical of a manufactured figurine, and a small round paint highlight in the eyes like a real collectible toy — the final image must always depict a physical toy object, never a real human face. Sharp realistic focus on the main subject, soft natural background blur (shallow depth of field), accurate real-world lighting with soft shadows and gentle highlights, fine physical texture detail up close. This applies to the entire background scene too: it must look like a real photographed environment or a realistic miniature diorama set, with natural materials, real-world lighting and photographic color grading.`,
+    negative: 'Avoid any painterly, illustrated, cartoonish, or flat-shaded rendering anywhere in the image, including the background. No visible brushstrokes, no cel-shading, no plastic-brick or felt textures. Never render an actual photorealistic human face — if the reference is a person, it must become a physical toy/figurine version of them, not a realistic depiction of the real person.',
+  },
+  pixar3d: {
+    intro: 'a polished 3D animated character in the style of a modern Pixar or Disney animated feature film',
+    styleBlock: 'High-quality 3D computer animation rendering throughout the ENTIRE image, matching the production quality of a contemporary animated feature film. Soft, rounded, appealing character modeling with subtle subsurface-scattering skin/fur shading (light gently glowing through thin edges like ears or fur tips), smooth clean topology with no visible polygon edges, warm cinematic three-point lighting with soft rim light separating the subject from the background, gentle ambient occlusion in creases and folds, glossy catchlight highlights in the eyes. This applies not only to the subject but to the entire background scene: trees, buildings, sky and ground must all be rendered as soft, rounded, richly lit 3D environments with the same warm cinematic lighting and depth, using gentle depth-of-field blur on distant elements, exactly like a wide establishing shot from an animated film.',
+    negative: 'Avoid flat 2D illustration, watercolor washes, hand-drawn line art, felt or brick textures, or true photorealism anywhere in the image, including the background. No sharp low-poly or geometric faceted surfaces — every shape should feel soft, rounded and warmly lit like a modern 3D animated film character.',
+  },
+  schizzo: {
+    intro: "a playful, loose pencil and colored-pencil sketch, like a rough drawing in a child's notebook",
+    styleBlock: 'Loose, energetic pencil and colored-pencil sketch rendering throughout the ENTIRE image, drawn on visible lightly-textured sketchbook paper. Sketchy, slightly wobbly hand-drawn outlines made of multiple overlapping pencil strokes rather than one clean line; visible light cross-hatching and shading built from short parallel pencil marks; uneven, slightly-outside-the-lines coloring typical of a child\'s drawing, with occasional visible white paper gaps where color wasn\'t fully filled in; soft graphite smudges in shadow areas; a charming unfinished, spontaneous, notebook-doodle quality. This applies not only to the subject but to the entire background scene: trees, buildings, sky and ground must all be drawn with the same loose sketchy pencil linework, light uneven coloring, and visible paper texture, as if the whole scene was doodled in one sitting in a sketchbook.',
+    negative: 'Avoid smooth digital rendering, glossy 3D, photorealism, or heavily inked clean line art anywhere in the image, including the background. No perfectly straight lines, no flat uniform color fills, no polished finished-illustration look — the whole image should look like a charming rough pencil sketch in progress.',
+  },
+  doodle: {
+    intro: 'a flat vector doodle cartoon illustration',
+    styleBlock: 'Clean flat vector cartoon illustration throughout the ENTIRE image — this means the background is redrawn from scratch in the same flat vector style as the subject, not kept as a real photo. Thin, perfectly uniform outline weight around every shape with no line-width variation; soft rounded organic shapes with no sharp corners; flat, solid pastel colors with zero gradients and almost no shading (at most one small flat shadow shape under the subject); the subject is deliberately drawn in a silly, funny, exaggerated cartoon proportion (oversized head, tiny limbs, big expressive eyes, or similar playful distortion). This applies not only to the subject but to the entire background scene: trees, buildings, sky and ground must all be simplified into flat rounded pastel shapes with the same thin uniform outline, keeping the overall scene visually busy and full of small playful decorative details (little stars, hearts, swirls, dots) while every individual shape stays flat and simplified.',
+    negative: 'Avoid photorealism, 3D rendering, painterly watercolor textures, heavy shading, gradients, or realistic proportions anywhere in the image, including the background. Keep every outline thin and uniform, every shape flat and pastel-colored, with almost no shadows or depth cues. The background is not optional: a photographic, textured, or realistic-looking background — even partially — is a failure of this style; every part of the environment must be flattened into the same simple vector shapes as the subject.',
   },
 }
 
@@ -138,6 +154,31 @@ const locations = [
   'a starlit meadow dotted with glowing mushrooms and fireflies',
   'a cloud kingdom with staircases made of rainbows',
   'an underground crystal cave sparkling with colorful gems',
+  'a tiny village hidden inside an enormous teacup',
+  'a tiny moon village beneath an enormous starry sky',
+  'a giant greenhouse filled with enormous tropical plants',
+  'a magical paper world made of folded origami landscapes',
+  'a giant aquarium tunnel surrounded by colorful sea creatures',
+  'a room filled with giant oversized toys',
+  'a village of fairies and magical woodland creatures',
+  'an ancient art museum filled with grand paintings and statues',
+  'flying through the sky on a magical creature amid falling confetti',
+  'a costume festival in a medieval town square',
+  'deep under the sea among colorful fish and coral reefs',
+  'a themed water park with slides and pools',
+  'a thrilling go-kart race on a colorful winding track filled with flags and cheering crowds',
+  'a floating market on wooden boats along a misty river',
+  'a giant birthday cake kingdom with candy decorations everywhere',
+  'an old windmill village surrounded by golden wheat fields',
+  'a cozy cabin buried in snow deep in a pine forest',
+  'a colorful festival street lined with paper lanterns and flags',
+  'a treetop rope bridge village connecting giant ancient trees',
+  'a music box world with giant gears and spinning figurines',
+  'a lighthouse on a rocky cliff overlooking a stormy sea',
+  'an ice palace with frozen waterfalls and sparkling icicles',
+  'a bustling toy train station with steam and colorful carriages',
+  'jungle temple ruins covered in vines and glowing symbols',
+  'a rooftop garden city above the clouds at sunset',
 ]
 
 const locationsIt = [
@@ -161,11 +202,31 @@ const locationsIt = [
   'un prato stellato pieno di funghi luminosi e lucciole',
   'un regno di nuvole con scale fatte di arcobaleni',
   'una grotta di cristallo sotterranea scintillante di gemme colorate',
+  "un minuscolo villaggio nascosto dentro una tazza da tè enorme",
+  'un piccolo villaggio sulla luna sotto un cielo stellato immenso',
+  'una serra gigante piena di enormi piante tropicali',
+  'un mondo magico di carta fatto di paesaggi origami',
+  'un tunnel acquario gigante circondato da creature marine colorate',
   'una stanza piena di giocattoli giganti',
-  'un villagio di fate e animali magici',
-  'un museo antico di arte',
-  'su un animale volante, sotto una pioggia di coriandoli',
-   'una festa in costume in una piazza medievale',
+  'un villaggio di fate e magiche creature del bosco',
+  'un museo antico pieno di grandi dipinti e statue',
+  'in volo nel cielo su una creatura magica, tra coriandoli che cadono',
+  'una festa in costume in una piazza medievale',
+  'in fondo al mare tra pesci colorati e coralli',
+  'un parco acquatico a tema con scivoli e piscine',
+  "un'entusiasmante gara di go-kart su una pista colorata e tortuosa, tra bandiere e folla festante",
+  'un mercato galleggiante su barche di legno lungo un fiume nebbioso',
+  'un regno a forma di torta di compleanno gigante pieno di decorazioni di caramelle',
+  'un vecchio villaggio di mulini a vento circondato da campi di grano dorato',
+  'una casetta accogliente sepolta nella neve, nel folto di una foresta di pini',
+  'una strada in festa piena di lanterne di carta colorate e bandierine',
+  'un villaggio di ponti sospesi tra le chiome di alberi giganti e antichi',
+  'un mondo carillon con ingranaggi giganti e statuine che girano',
+  'un faro su una scogliera rocciosa affacciato su un mare in tempesta',
+  'un palazzo di ghiaccio con cascate ghiacciate e ghiaccioli scintillanti',
+  'una stazione ferroviaria giocattolo piena di vapore e vagoni colorati',
+  'rovine di un tempio nella giungla coperte di rampicanti e simboli luminosi',
+  'un giardino pensile sopra le nuvole al tramonto',
 ]
 
 const poses = [
@@ -185,6 +246,15 @@ const poses = [
   'crouching low to peek inside a tiny door',
   'stretching upward on tiptoes reaching for a star',
   'sitting cross-legged, deep in thought',
+  'standing proudly with hands on hips',
+  'curling up comfortably while sleeping',
+  'stumbling forward with arms stretched out',
+  'hanging playfully upside down',
+  'sitting with chin resting on both hands',
+  'leaning forward curiously with hands behind its back',
+  'leaping forward as if trying to catch something',
+  'waving both arms enthusiastically',
+  'spinning around with arms open and one leg lifted',
 ]
 
 const lightings = [
@@ -196,6 +266,16 @@ const lightings = [
   'cool blue moonlight filtering gently through leaves',
   'a rosy pink dawn light with soft drifting mist',
   'festive multicolored fairy lights glowing everywhere',
+  'colorful stained-glass light projecting rainbow patterns everywhere',
+  'dramatic stormy lighting illuminated by distant flashes of lightning',
+  'dreamy pink and lavender twilight bathing everything in pastel light',
+  'soft sunlight filtering through leaves creating dancing patches of light',
+  'gentle golden-hour backlight creating a warm glowing silhouette',
+  'cool cyan bioluminescent glow lighting up the whole scene',
+  'bright cheerful daylight with crisp long shadows',
+  'flickering warm candlelight casting dancing shadows',
+  'soft overcast light with even, gentle shadows',
+  'a dramatic spotlight beam cutting through soft haze',
 ]
 
 const emotions = [
@@ -209,6 +289,15 @@ const emotions = [
   'proud and confident expression',
   'gentle loving expression',
   'excited, eyes sparkling with energy',
+  'astonished with huge eyes and hands on cheeks',
+  'dreamily gazing upward with a soft smile',
+  'deeply focused with a serious determined look',
+  'relieved and happy with a gentle smile',
+  'suspiciously looking sideways',
+  'embarrassed with flushed cheeks and a tiny smile',
+  'brimming with courage and determination',
+  'pouting dramatically with puffed cheeks',
+  'joyfully laughing with mouth wide open',
 ]
 
 // ---- Puzzle scorrevole 3x3 (8 pezzi + 1 vuoto) ----
@@ -420,16 +509,18 @@ Rispondi SOLO con un oggetto JSON in questo formato esatto, senza markdown e sen
 async function generateStoryImage(characterName, genereEn, moodEn, styleKey, photoDataUrl, location, pose, emotion, lighting) {
   const style = styleDetails[styleKey] || styleDetails.acquerello
 
-  const prompt = `Redraw the subject from the reference photo as ${style.intro}.
+  const prompt = `Redraw the subject(s) from the reference photo as ${style.intro}.
 The reference photo's subject could be a plush toy, an action figure, a robot, a doll, a person, or an animal — first identify what kind of subject it actually is, then keep that same nature in the redrawn version. Do not change what kind of subject it is (for example, never turn a person into an animal, or an animal into an object, or vice versa) — only its material and texture change according to the style below.
+If the reference photo shows more than one character or subject, redraw ALL of them together in the same scene, preserving how many there are and each one's individual appearance and nature — never drop one of them and never depict only a single subject when the reference photo shows several.
 Preserve the subject's overall silhouette, proportions, color palette and personality — but its surface material and texture must be entirely replaced by the new style described below; the original photo's real material must completely disappear unless that literally is the requested style.
+Faithfully preserve exactly which features the subject does and does not have in the reference photo — for example, if it has no visible mouth, no visible eyebrows, or is missing a limb or other feature, keep it exactly that way; never invent or add a feature that is not present in the original photo.
 Ignore the character's name (${characterName}) when deciding its appearance — rely only on the reference photo's shape and colors.
 
-STYLE (applies to the subject AND the entire background scene — do not leave any part of the image photorealistic or unstyled): ${style.styleBlock}
+STYLE — this is a complete repaint of the ENTIRE image, subject and background alike; nothing in the final image may remain a real, unstyled photograph: ${style.styleBlock}
 
-The subject is ${pose}, with ${emotion}, set in ${location}, experiencing ${genereEn}. Lighting: ${lighting}. Remember: the location itself (${location}) must be rebuilt entirely out of the style material described above, not shown as a real place.
+The subject is ${pose}, with ${emotion}, set in ${location}, experiencing ${genereEn}. Lighting: ${lighting}. Remember: the location itself (${location}) must be rebuilt entirely out of the style material described above, not shown as a real place — every element of the background must be redrawn in the same style as the subject, with no photographic or unstyled areas left anywhere in the frame.
 ${style.negative}
-Depict only the one subject from the reference photo, optionally alongside animal or fantasy creatures — do not add extra human characters or children who are not the subject itself.
+Depict only the character(s) actually present in the reference photo, optionally alongside animal or fantasy creatures — do not add extra unrelated human characters or children.
 No text, letters, numbers or words anywhere in the image.
 Square, dynamic, eye-catching composition, like a beautiful postcard illustration with a full background scene rendered consistently in the same style as the subject. Overall atmosphere: ${moodEn}.`
 
@@ -534,7 +625,7 @@ onUnmounted(() => {
 .title-wrap {
   position: relative;
   display: inline-block;
-  margin-bottom: 0.6rem;
+  margin-bottom: 1rem;
 }
 h1 {
   font-size: 1.6rem;
@@ -557,15 +648,14 @@ h1 {
 
 .subtitle {
   color: #666;
-  margin: 0 0 2.5rem;
+  margin: 0 0 3rem;
 }
 
 .magic-stage {
   position: relative;
   width: 340px;
   height: 340px;
-  margin: 0 auto 1.5rem;
-  perspective: 1100px;
+  margin: 0 auto 2rem;
 }
 
 .aura {
@@ -601,42 +691,6 @@ h1 {
 @keyframes twinkle-float {
   0%, 100% { opacity: 0; transform: translateY(6px) scale(0.6) rotate(0deg); }
   50% { opacity: 1; transform: translateY(-4px) scale(1.2) rotate(20deg); }
-}
-
-.wand-orbit {
-  position: absolute;
-  top: -6px;
-  left: 50%;
-  width: 1px;
-  height: 1px;
-  z-index: 3;
-  animation: wand-arc 3.4s ease-in-out infinite;
-}
-@keyframes wand-arc {
-  0%, 100% { transform: translateX(-130px) translateY(0) rotate(-18deg); }
-  50% { transform: translateX(130px) translateY(-10px) rotate(18deg); }
-}
-.wand {
-  position: absolute;
-  font-size: 1.6rem;
-  transform: translate(-50%, -50%);
-  filter: drop-shadow(0 4px 6px rgba(108, 79, 214, 0.3));
-}
-.wand-trail {
-  position: absolute;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #f5c76e;
-  transform: translate(-50%, -50%);
-  animation: trail-fade 1s ease-out infinite;
-}
-.wt-1 { top: 10px; left: -16px; animation-delay: 0s; background: #f5c76e; }
-.wt-2 { top: 16px; left: -30px; animation-delay: 0.15s; background: #c9527a; }
-.wt-3 { top: 20px; left: -44px; animation-delay: 0.3s; background: #6c4fd6; }
-@keyframes trail-fade {
-  0% { opacity: 0.9; transform: translate(-50%, -50%) scale(1); }
-  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
 }
 
 .puzzle-wrap {
@@ -718,7 +772,7 @@ h1 {
 .loader-caption {
   font-size: 0.9rem;
   color: #7a6d5d;
-  margin: 0 0 2rem;
+  margin: 0 0 2.5rem;
 }
 
 .progress-bar {
@@ -730,7 +784,7 @@ h1 {
 }
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #6c4fd6, #c9527a, #f5c76e);
+  background: linear-gradient(90deg, #c9b8f0, #8a6ae8, #4a2f9e);
   background-size: 200% 100%;
   transition: width 0.3s ease;
   position: relative;
@@ -750,12 +804,12 @@ h1 {
 }
 .progress-label {
   display: block;
-  margin-top: 0.5rem;
+  margin-top: 0.6rem;
   font-size: 0.85rem;
   color: #666;
 }
 .progress-hint {
-  margin-top: 1.5rem;
+  margin-top: 2rem;
   font-size: 0.85rem;
   color: #888;
 }
